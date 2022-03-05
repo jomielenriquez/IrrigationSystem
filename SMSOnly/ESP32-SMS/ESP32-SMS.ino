@@ -348,8 +348,6 @@ void setup() {
     server.begin();
     Serial.println("HTTP server started");
     if(WiFi.status()== WL_CONNECTED){
-      //Serial.print(GetWeather());
-      //Serial2.println(GetWeather());
     }
     else {
       Serial.println("WiFi Disconnected");
@@ -358,11 +356,8 @@ void setup() {
 
 
 void loop() {
-   //server.handleClient(); // Listen for client connections
-   
    RtcDateTime now = Rtc.GetDateTime();
    
-   //DateTime now = rtc.now();
    char datestring[20];
    char timestring[20];
    
@@ -381,7 +376,6 @@ void loop() {
    
    String Time = timestring;
    String Date = datestring;
-   //String StrDay = daysOfTheWeek[now.dayOfTheWeek()];
    String StrDay = "";
    String strSoilMoistureReading = "";
    
@@ -391,9 +385,7 @@ void loop() {
     Serial.println(strToPrint);
     appendFile(SD, "/SoilMoistureLog.txt", strToPrint.c_str());
    }
-   //3600000
    if(countLoop>=300000){
-    //Serial2.println(GetWeather());
     countLoop=0;
    }
    countLoop=countLoop+10;
