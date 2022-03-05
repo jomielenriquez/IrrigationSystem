@@ -1,19 +1,14 @@
-#include <WiFi.h>              // Built-in
+#include <WiFi.h> 
 #include <TimeLib.h>
-#include <WiFiMulti.h>         // Built-in
-//#include <ESP32WebServer.h>    // https://github.com/Pedroalbuquerque/ESP32WebServer download and place in your Libraries folder
+#include <WiFiMulti.h>
 #include <ESPmDNS.h>
 #include "FS.h"
 #include "Network.h"
 #include "Sys_Variables.h"
 #include "CSS.h"
-//===========================sdcardModule
+//SD Card Library
 #include "SD.h"
-//==========================ds3231
 #include <SPI.h>
-//#include <Wire.h>
-//#include "RTClib.h"
-
 #include <ThreeWire.h>  
 #include <RtcDS1302.h>
 
@@ -51,36 +46,20 @@ int countLoop=0;
  */
 
 WiFiMulti wifiMulti;
-//ESP32WebServer server(80);
-
-//============================ds3231
-//RTC_DS3231 rtc;
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 //vcc => 3.3v
 //SCL => G22
 //SDA => G21
 
-
-// Update these with values suitable for your network.
-//const char* ssid = "GlobeAtHome_726e8_2.4";
-//const char* password = "croods123";
-//const char* ssid = "GlobeAtHome_57910_5";
-//const char* password = "siJonasBakling";
-//const char* mqtt_server = "broker.mqtt-dashboard.com";
 #define mqtt_port 1883
 #define MQTT_USER "mqtt username"
 #define MQTT_PASSWORD "mqtt password"
 #define MQTT_SERIAL_PUBLISH_CH "/ic/esp32/serialdata/uno/"
 
-// adding serial 
+// Serial Monitor pin 
 #define RXD2 17
 #define TXD2 16
-//WiFiClient wifiClient;
 #define countof(a) (sizeof(a) / sizeof(a[0]))
-
-//PubSubClient client(wifiClient);
-
-//===================SD Card Module
 
 void listDir(fs::FS &fs, const char * dirname, uint8_t levels){
     Serial.printf("Listing directory: %s\n", dirname);
@@ -244,8 +223,6 @@ String reading(){
 }
 void setup() {
   //initializing serial 2
-  // Note the format for setting a serial port is as follows: Serial2.begin(baud-rate, protocol, RX pin, TX pin);
-  //Serial1.begin(9600, SERIAL_8N1, RXD2, TXD2);
   Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2);
   
   Serial.begin(115200); //Serial must always be 115200 baud
@@ -346,12 +323,7 @@ void setup() {
     uint64_t cardSize = SD.cardSize() / (1024 * 1024);
     Serial.printf("SD Card Size: %lluMB\n", cardSize);
 
-    //server.on("/",         HomePage);
-    //server.on("/download", File_Download);
-    //server.on("/delete", File_Delete);
-    //server.on("/downloadWeather",downloadWeather);
-    //server.on("/deleteWeather",deleteWeather);
-    ///////////////////////////// End of Request commands
+    //Host web server
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
       request->send_P(200, "text/html", index_html);
     });
