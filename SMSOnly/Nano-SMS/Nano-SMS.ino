@@ -1,7 +1,7 @@
 
 #include<SoftwareSerial.h>
-const int AirValue1 = 300; //285   //you need to replace this value with Value_1
-const int SWSValue1 = 190;  //you need to replace this value with Value_2
+const int AirValue1 = 300; //285   
+const int SWSValue1 = 190;  
 
 const int AirValue2 = 300; //280  //you need to replace this value with Value_1
 const int SWSValue2 = 190;  //you need to replace this value with Value_2
