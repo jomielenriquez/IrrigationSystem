@@ -2,11 +2,11 @@
 #include <dht.h>
 #define dht_apin A4 // Analog Pin sensor is connected to
 dht DHT;
-const int AirValue1 = 300; //285   //you need to replace this value with Value_1
-const int SWSValue1 = 190;  //you need to replace this value with Value_2
+const int AirValue1 = 560; //285   //you need to replace this value with Value_1
+const int SWSValue1 = 180;  //you need to replace this value with Value_2
 
-const int AirValue2 = 300; //280  //you need to replace this value with Value_1
-const int SWSValue2 = 190;  //you need to replace this value with Value_2
+const int AirValue2 = 560; //280  //you need to replace this value with Value_1
+const int SWSValue2 = 180;  //you need to replace this value with Value_2
 int intRecord=0;
 int soilMoistureValue1 = 0,soilMoistureValue2 = 0,soilMoistureValue3 = 0;
 int Ave=0;
@@ -78,26 +78,25 @@ void loop() {
     
   }
   //Serial.println("Reading1: ");
-  soilMoistureValue1 = analogRead(A2);  //put Sensor insert into soil
-  soilMoistureValue2 = soilMoistureValue1;  //put Sensor insert into soil
-  soilMoistureValue3 = analogRead(A3);  //put Sensor insert into soil
-
+  soilMoistureValue1 = analogRead(A1);  //put Sensor insert into soil
+  soilMoistureValue2 = analogRead(A2);  //put Sensor insert into soil
+  
   int SM_per1 = map(soilMoistureValue1,AirValue1,SWSValue1,0,100);
-  int SM_per2 = map(soilMoistureValue1,AirValue2,SWSValue2,0,100);
+  int SM_per2 = map(soilMoistureValue2,AirValue2,SWSValue2,0,100);
 
   Ave = (SM_per1+SM_per2)/2;
   float Water_distance = getLength();
   //area 79.796453401
   Serial.println("Reading1 :" + String(soilMoistureValue1) + " - " + SM_per1 + "%, Reading2 :" + String(soilMoistureValue2) + " - " + SM_per2 + "%, Average:" + String(Ave) + " "  + String(intIsWaterOn) + " Humidity: "+DHT.humidity + ", Temperature: " + DHT.temperature + ", distance: " + Water_distance);
   //if(intRecord==300000)
-  //if(intRecord==3000){
+  //if(intRecord==60000){
     //intRecord=0;
-    Serial.print("\n===========\nSaved to SD\n===========\n");
-    sw.println("Reading1 : " + String(soilMoistureValue1) + " - " + SM_per1 + "%, Reading2 : " + String(soilMoistureValue2) + " - " + SM_per2 + "%, Average: " + String(Ave) + "%, isWaterOn : "  + String(intIsWaterOn) + " Humidity: "+DHT.humidity + ", Temperature: " + DHT.temperature + ", distance: " + Water_distance);
+    Serial.print("=>SD");
+    sw.println("Reading1 : " + String(soilMoistureValue1) + " - " + SM_per1 + "%, Reading2 : " + String(soilMoistureValue2) + " - " + SM_per2 + "%, Average: " + String(Ave) + "%, isWaterOn : "  + String(intIsWaterOn) + ", Humidity: "+DHT.humidity + ", Temperature: " + DHT.temperature + ", distance: " + Water_distance);
   //}
 //3600000
-  Serial.print(intWater);
-  if(intWater==3000){
+  Serial.print(intWater/1000);
+  if(intWater==3600000){
     intWater=0;
     isHour=true;
   }
@@ -107,7 +106,7 @@ void loop() {
   
     if(isPause==false)
     {
-      if(Ave<80 && willRain == false)
+      if(Ave<50 && willRain == false)
       //if(Ave<50)
       {
         isWaterOn = true;
