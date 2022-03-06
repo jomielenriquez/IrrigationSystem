@@ -1,10 +1,10 @@
 
 #include<SoftwareSerial.h>
 const int AirValue1 = 610; //285   
-const int SWSValue1 = 260;  
+const int SWSValue1 = 250;  
 
 const int AirValue2 = 610; //280  
-const int SWSValue2 = 260;  
+const int SWSValue2 = 250;  
 int intRecord=0;
 int soilMoistureValue1 = 0,soilMoistureValue2 = 0,soilMoistureValue3 = 0;
 int Ave=0;
