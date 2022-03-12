@@ -35,6 +35,8 @@ const char index_html[] PROGMEM = R"rawliteral(
   </br>
   <div id="div_SdStatus"></div>
   </br>
+  <div id="div_DHTTemp"></div>
+  </br>
   <div id="div_Water"></div>
   </br>
   <button onclick="downloadSMS()">Download</button>
@@ -54,6 +56,8 @@ setInterval(function ( ) {
       document.getElementById("div_Date").innerHTML=Data[8];
       document.getElementById("div_Weather").innerHTML=Data[10];
       document.getElementById("div_SdStatus").innerHTML=Data[9];
+      document.getElementById("div_DHTTemp").innerHTML=Data[4] + "% " + Data[5] + " \xB0C";
+      
       const Water = Data[6].split(" ");
       console.log(Water);
       var int_water = 30-Water[2];
