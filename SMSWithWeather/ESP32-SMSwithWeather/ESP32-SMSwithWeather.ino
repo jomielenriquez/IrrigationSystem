@@ -364,17 +364,27 @@ void setup() {
       request->send_P(200, "text/plain", reading().c_str());
     });
 
-    server.on("/downloadSMS", HTTP_GET, [] (AsyncWebServerRequest *request) {
-      File file = SD.open("/SoilMoistureLog.txt");
-      if(!file){
-          Serial.println("Failed to open file for reading");
-          request->send (200, "text/html", "<H1>Failed to open file for reading</h1>");
+    server.on("/downloadSMS",  [] (AsyncWebServerRequest *request) {
+      //File file = SD.open("/SoilMoistureLog.txt");
+      //if(!file){
+      //    Serial.println("Failed to open file for reading");
+      //    request->send (200, "text/html", "<H1>Failed to open file for reading</h1>");
+      //}
+      //else{
+      //    request->send(file, "/SoilMoistureLog.txt", "text/xhr", true);
+      //    Serial.print("Recieved SoilMoistureLog.txt request from client IP ");
+      //    Serial.println(request->client()->remoteIP());
+      //} 
+      //request->send(file, "/SoilMoistureLog.txt", "text/plain");
+      
+      File file11 = SD.open("/SoilMoistureLog.txt");
+      if(!file11){
+      //Serial.println("MCD File Failed to open file for reading");
+      return;
       }
-      else{
-          request->send(file, "/SoilMoistureLog.txt", "text/xhr", true);
-          Serial.print("Recieved SoilMoistureLog.txt request from client IP ");
-          Serial.println(request->client()->remoteIP());
-      } 
+      request->send(file11, "/SoilMoistureLog.txt", "text/xhr");
+      Serial.print("Recieved MCD.txt request from client IP ");
+      Serial.println(request->client()->remoteIP());
     });
     
     server.begin();
