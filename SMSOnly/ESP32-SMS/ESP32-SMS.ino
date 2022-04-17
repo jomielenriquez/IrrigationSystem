@@ -1,3 +1,4 @@
+//initialize all library
 #include <WiFi.h> 
 #include <TimeLib.h>
 #include <WiFiMulti.h>
@@ -6,7 +7,6 @@
 #include "Network.h"
 #include "Sys_Variables.h"
 #include "CSS.h"
-//SD Card Library
 #include "SD.h"
 #include <SPI.h>
 #include <ThreeWire.h>  
@@ -34,7 +34,7 @@ String jsonBuffer;
 int countLoop=0;
 
 /*
- * Connect the SD card to the following pins:
+ * Connection of SD Card Reader to ESP 32
  *
  * SD Card | ESP32
  * GND      GND
@@ -47,6 +47,7 @@ int countLoop=0;
 
 WiFiMulti wifiMulti;
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+// Connection of Realtime module to ESP 32
 //vcc => 3.3v
 //SCL => G22
 //SDA => G21
@@ -61,6 +62,7 @@ char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursd
 #define TXD2 16
 #define countof(a) (sizeof(a) / sizeof(a[0]))
 
+// Function to Display all files in SD Card
 void listDir(fs::FS &fs, const char * dirname, uint8_t levels){
     Serial.printf("Listing directory: %s\n", dirname);
 
@@ -92,6 +94,7 @@ void listDir(fs::FS &fs, const char * dirname, uint8_t levels){
     }
 }
 
+// Function to Create file and Directory in SD Card
 void createDir(fs::FS &fs, const char * path){
     Serial.printf("Creating Dir: %s\n", path);
     if(fs.mkdir(path)){
@@ -101,6 +104,7 @@ void createDir(fs::FS &fs, const char * path){
     }
 }
 
+// Function to remove file in SD Card
 void removeDir(fs::FS &fs, const char * path){
     Serial.printf("Removing Dir: %s\n", path);
     if(fs.rmdir(path)){
@@ -110,6 +114,7 @@ void removeDir(fs::FS &fs, const char * path){
     }
 }
 
+//Function to Read file in SD Card
 void readFile(fs::FS &fs, const char * path){
     Serial.printf("Reading file: %s\n", path);
 
@@ -126,6 +131,7 @@ void readFile(fs::FS &fs, const char * path){
     file.close();
 }
 
+// Function to Write File in SD Card
 void writeFile(fs::FS &fs, const char * path, const char * message){
     Serial.printf("Writing file: %s\n", path);
 
@@ -142,6 +148,7 @@ void writeFile(fs::FS &fs, const char * path, const char * message){
     file.close();
 }
 
+// Function to update file in SD Card
 void appendFile(fs::FS &fs, const char * path, const char * message){
     Serial.printf("Appending to file: %s\n", path);
 
@@ -158,6 +165,7 @@ void appendFile(fs::FS &fs, const char * path, const char * message){
     file.close();
 }
 
+// Function to Rename File in SD Card
 void renameFile(fs::FS &fs, const char * path1, const char * path2){
     Serial.printf("Renaming file %s to %s\n", path1, path2);
     if (fs.rename(path1, path2)) {
@@ -167,6 +175,7 @@ void renameFile(fs::FS &fs, const char * path1, const char * path2){
     }
 }
 
+// Function to delete file in SD Card
 void deleteFile(fs::FS &fs, const char * path){
     Serial.printf("Deleting file: %s\n", path);
     if(fs.remove(path)){
@@ -176,53 +185,10 @@ void deleteFile(fs::FS &fs, const char * path){
     }
 }
 
-void testFileIO(fs::FS &fs, const char * path){
-    File file = fs.open(path);
-    static uint8_t buf[512];
-    size_t len = 0;
-    uint32_t start = millis();
-    uint32_t end = start;
-    if(file){
-        len = file.size();
-        size_t flen = len;
-        start = millis();
-        while(len){
-            size_t toRead = len;
-            if(toRead > 512){
-                toRead = 512;
-            }
-            file.read(buf, toRead);
-            len -= toRead;
-        }
-        end = millis() - start;
-        Serial.printf("%u bytes read for %u ms\n", flen, end);
-        file.close();
-    } else {
-        Serial.println("Failed to open file for reading");
-    }
-
-
-    file = fs.open(path, FILE_WRITE);
-    if(!file){
-        Serial.println("Failed to open file for writing");
-        return;
-    }
-
-    size_t i;
-    start = millis();
-    for(i=0; i<2048; i++){
-        file.write(buf, 512);
-    }
-    end = millis() - start;
-    Serial.printf("%u bytes written for %u ms\n", 2048 * 512, end);
-    file.close();
-}
-
 String reading(){
   return strToPrint;  
 }
 void setup() {
-  //initializing serial 2
   Serial2.begin(9600, SERIAL_8N1, RXD2, TXD2);
   
   Serial.begin(115200); //Serial must always be 115200 baud
@@ -231,17 +197,13 @@ void setup() {
   if (!WiFi.config(local_IP, gateway, subnet, dns)) { //WiFi.config(ip, gateway, subnet, dns1, dns2);
     Serial.println("WiFi STATION Failed to configure Correctly"); 
   } 
-  //wifiMulti.addAP(ssid_1, password_1);  // add Wi-Fi networks you want to connect to, it connects strongest to weakest
   wifiMulti.addAP(ssid_2, password_2);  // Adjust the values in the Network tab
-  //wifiMulti.addAP(ssid_3, password_3);
-  //wifiMulti.addAP(ssid_4, password_4);  // You don't need 4 entries, this is for example!
   
   Serial.println("Connecting ...");
   while (wifiMulti.run() != WL_CONNECTED) { // Wait for the Wi-Fi to connect: scan for Wi-Fi networks, and connect to the strongest of the networks above
     delay(250); Serial.print('.');
   }
   Serial.println("\nConnected to "+WiFi.SSID()+" Use IP address: "+WiFi.localIP().toString()); // Report which SSID and IP is in use
-  // The logical name http://fileserver.local will also access the device if you have 'Bonjour' running or your system supports multicast dns
   if (!MDNS.begin(servername)) {          // Set your preferred server name, if you use "myserver" the address would be http://myserver.local/
     Serial.println(F("Error setting up MDNS responder!")); 
     ESP.restart(); 
@@ -254,10 +216,6 @@ void setup() {
 
     if (!Rtc.IsDateTimeValid()) 
     {
-        // Common Causes:
-        //    1) first time you ran and the device wasn't running yet
-        //    2) the battery on the device is low or even missing
-
         Serial.println("RTC lost confidence in the DateTime!");
         Rtc.SetDateTime(compiled);
     }
@@ -288,9 +246,7 @@ void setup() {
     {
         Serial.println("RTC is the same as compile time! (not expected but all is fine)");
     }
-  //rtc.adjust(DateTime(__DATE__, __TIME__));
-
-  //Setup SD Card
+  
   if(!SD.begin()){
         Serial.println("Card Mount Failed");
         SD_Status="Card Mount Failed";
@@ -323,7 +279,6 @@ void setup() {
     uint64_t cardSize = SD.cardSize() / (1024 * 1024);
     Serial.printf("SD Card Size: %lluMB\n", cardSize);
 
-    //Host web server
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
       request->send_P(200, "text/html", index_html);
     });

@@ -54,11 +54,8 @@ void loop() {
   DHT.read11(dht_apin);
   while (sw.available()){
     strWeather = sw.readStringUntil('\n');
-    Serial.println();
-    Serial.println("\n=====================");
     Serial.println(strWeather);
     intWeather = strWeather.toInt();
-    Serial.println("=====================\n");
     if(intWeather>=200 && intWeather <=232){
       willRain = true;
       Serial.print("WILL RAIN\n");
@@ -77,26 +74,20 @@ void loop() {
     }
     
   }
-  //Serial.println("Reading1: ");
-  soilMoistureValue1 = analogRead(A2);  //put Sensor insert into soil
-  soilMoistureValue2 = soilMoistureValue1;  //put Sensor insert into soil
-  soilMoistureValue3 = analogRead(A3);  //put Sensor insert into soil
+
+  soilMoistureValue1 = analogRead(A2);  //Soil Moisture Reading 1
+  soilMoistureValue2 = analogRead(A3);  //Soik Moisture Reading 2
 
   int SM_per1 = map(soilMoistureValue1,AirValue1,SWSValue1,0,100);
   int SM_per2 = map(soilMoistureValue1,AirValue2,SWSValue2,0,100);
 
   Ave = (SM_per1+SM_per2)/2;
   float Water_distance = getLength();
-  //area 79.796453401
   Serial.println("Reading1 :" + String(soilMoistureValue1) + " - " + SM_per1 + "%, Reading2 :" + String(soilMoistureValue2) + " - " + SM_per2 + "%, Average:" + String(Ave) + " "  + String(intIsWaterOn) + " Humidity: "+DHT.humidity + ", Temperature: " + DHT.temperature + ", distance: " + Water_distance);
-  //if(intRecord==300000)
-  //if(intRecord==3000){
-    //intRecord=0;
-    Serial.print("\n===========\nSaved to SD\n===========\n");
-    sw.println("Reading1 : " + String(soilMoistureValue1) + " - " + SM_per1 + "%, Reading2 : " + String(soilMoistureValue2) + " - " + SM_per2 + "%, Average: " + String(Ave) + "%, isWaterOn : "  + String(intIsWaterOn) + " Humidity: "+DHT.humidity + ", Temperature: " + DHT.temperature + ", distance: " + Water_distance);
-  //}
-//3600000
-  Serial.print(intWater);
+  
+  //Send data to ESP32 using serial monitor
+  sw.println("Reading1 : " + String(soilMoistureValue1) + " - " + SM_per1 + "%, Reading2 : " + String(soilMoistureValue2) + " - " + SM_per2 + "%, Average: " + String(Ave) + "%, isWaterOn : "  + String(intIsWaterOn) + " Humidity: "+DHT.humidity + ", Temperature: " + DHT.temperature + ", distance: " + Water_distance);
+
   if(intWater==3000){
     intWater=0;
     isHour=true;
