@@ -1,9 +1,9 @@
 
 #include<SoftwareSerial.h>
-const int AirValue1 = 610; //285   
-const int SWSValue1 = 302;  
 
-const int AirValue2 = 606; //280  
+const int AirValue1 = 610;  
+const int SWSValue1 = 302;  
+const int AirValue2 = 606;
 const int SWSValue2 = 286;  
 int intRecord=0;
 int soilMoistureValue1 = 0,soilMoistureValue2 = 0,soilMoistureValue3 = 0;
@@ -33,13 +33,10 @@ void loop() {
   Ave = (SM_per1+SM_per2)/2;
   
   Serial.println("Reading1 :" + String(soilMoistureValue1) + " - " + SM_per1 + "%, Reading2 :" + String(soilMoistureValue2) + " - " + SM_per2 + "%, Average:" + String(Ave) + " "  + String(intIsWaterOn));
-  //if(intRecord==300000)
-  //if(intRecord==3000){
-    //intRecord=0;
-    Serial.print("=>SD ");
-    sw.println("Reading1 : " + String(soilMoistureValue1) + " - " + SM_per1 + "%, Reading2 : " + String(soilMoistureValue2) + " - " + SM_per2 + "%, Average: " + String(Ave) + "%, isWaterOn : "  + String(intIsWaterOn));
-  //}
-//3600000
+  
+  // Send data to ESP32 using serial monitor
+  sw.println("Reading1 : " + String(soilMoistureValue1) + " - " + SM_per1 + "%, Reading2 : " + String(soilMoistureValue2) + " - " + SM_per2 + "%, Average: " + String(Ave) + "%, isWaterOn : "  + String(intIsWaterOn));
+
   Serial.print(intWater/1000);
   if(intWater==10000){
     intWater=0;
@@ -56,10 +53,6 @@ void loop() {
         isWaterOn = true;
         digitalWrite(8,LOW);
       }
-      else{
-        //isHour=false;
-      }
-      //if(Ave>=80 && intIsWaterOn == 18 && isWaterOn == true){
       if(intIsWaterOn == 3 && isWaterOn == true){
         intIsWaterOn=0;
         isWaterOn = false;
