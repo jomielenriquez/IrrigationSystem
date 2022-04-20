@@ -60,7 +60,7 @@ void loop() {
         //isHour=false;
       }
       //if(Ave>=80 && intIsWaterOn == 18 && isWaterOn == true){
-      if(intIsWaterOn == 3 && isWaterOn == true){
+      if(intIsWaterOn == 18 && isWaterOn == true){
         intIsWaterOn=0;
         isWaterOn = false;
         digitalWrite(8,HIGH);
@@ -75,7 +75,7 @@ void loop() {
     else{
       intIsPause++;
     }
-    if(intIsPause==10){
+    if(intIsPause==3600){
       isPause=false;
       intIsPause=0;
     }
